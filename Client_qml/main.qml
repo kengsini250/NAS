@@ -4,6 +4,7 @@ import "./qml/"
 //import NetWork 1.0
 
 Window {
+    id:main_root
     width: 640
     height: 480
     visible: true
@@ -14,6 +15,7 @@ Window {
 //    }
 
     MyMenuBar{
+        id:menuBar
         x:0
         y:0
         width:parent.width
@@ -26,9 +28,7 @@ Window {
 
     MyListView {
         id: myListView
-        x: 0
-        y: 30
-        width:parent.width
-        height:parent.height-30
+        width: parent.width
+        height: parent.height
     }
 }
