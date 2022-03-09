@@ -6,7 +6,7 @@
 #include "FileFormat.h"
 
 struct Data{
-    FileFormat::Format Format;
+    QString picPath;
     QString name;
 };
 

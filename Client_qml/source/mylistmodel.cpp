@@ -13,7 +13,6 @@ int MyListModel::rowCount(const QModelIndex &parent) const
         return 0;
 
     // FIXME: Implement me!
-    qDebug()<<"data size : "<<items->items().size();
     return items->items().size();
 }
 
@@ -26,7 +25,7 @@ QVariant MyListModel::data(const QModelIndex &index, int role) const
     Data entry = items->items().at(index.row());
     if (role == Roles::A)
     {
-        return QVariant(entry.Format);
+        return QVariant(entry.picPath);
     } else if (role == Roles::B)
     {
         return QVariant(entry.name);
@@ -41,7 +40,7 @@ bool MyListModel::setData(const QModelIndex &index, const QVariant &value, int r
     Data entry = items->items().at(index.row());
     if (role == Roles::A)
     {
-        entry.Format = value.value<FileFormat::Format>();
+        entry.picPath = value.toString();
     } else if (role == Roles::B)
     {
         entry.name = value.toString();
@@ -67,7 +66,7 @@ Qt::ItemFlags MyListModel::flags(const QModelIndex &index) const
 QHash<int, QByteArray> MyListModel::roleNames() const
 {
     QHash<int,QByteArray> head;
-    head[Roles::A]="pic";
+    head[Roles::A]="picPath";
     head[Roles::B]="name";
     return head;
 }

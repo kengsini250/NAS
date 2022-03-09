@@ -45,7 +45,12 @@ void C_NetWork::newConnect(const User &u)
                     if (reqData.title == "Dir") {
                         QList<FileFormat> dirs = FileFormat::makeFileFormat(reqData.data);
                         for(auto&p:dirs){
-                            data->append({p.getType(),p.getName()});
+                            if(p.getType() == FileFormat::DIR){
+                                data->append({"qrc:///pic/dir.png",p.getName()});
+                            }
+                            if(p.getType() == FileFormat::FILE){
+                                data->append({"qrc:///pic/file.png",p.getName()});
+                            }
                         }
                     }
 
