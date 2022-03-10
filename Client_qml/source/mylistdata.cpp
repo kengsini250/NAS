@@ -26,7 +26,5 @@ void MyListData::append(const Data &d)
 
 void MyListData::removeAll()
 {
-    emit preItemRemoved();
     data.clear();
-    emit postItemRemoved();
 }

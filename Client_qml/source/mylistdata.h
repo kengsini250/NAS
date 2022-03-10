@@ -20,8 +20,6 @@ public:
 signals:
     void preItemAppended();
     void postItemAppended();
-    void preItemRemoved();
-    void postItemRemoved();
 public slots:
     void append(const Data&d);
     void removeAll();

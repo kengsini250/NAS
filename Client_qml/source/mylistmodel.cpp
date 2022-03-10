@@ -83,12 +83,6 @@ void MyListModel::set(MyListData *i)
     connect(items, &MyListData::postItemAppended, this, [=]() {
         endInsertRows();
     });
-    connect(items, &MyListData::preItemRemoved, this, [=]() {
-        removeRows(0,items->items().count());
-    });
-    connect(items, &MyListData::postItemRemoved, this, [=]() {
-//        endRemoveRows();
-    });
     endResetModel();
 }
 
