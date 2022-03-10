@@ -30,6 +30,21 @@ void C_NetWork::Refresh()
     write2server({"REFRESH", ""});
 }
 
+void C_NetWork::changeDIR(int index)
+{
+    changeDIR(data->items().at(index).name);
+}
+
+void C_NetWork::changeDIR(const QString &msg)
+{
+    write2server({"CHANGEDIR",msg});
+}
+
+void C_NetWork::removeAll()
+{
+    data->removeAll();
+}
+
 void C_NetWork::newConnect(const User &u)
 {
     tcpClient->connectToHost(u.addr,55555,QTcpSocket::ReadWrite);
@@ -43,6 +58,11 @@ void C_NetWork::newConnect(const User &u)
                 [this]{
                     auto reqData = getFromServer();
                     if (reqData.title == "Dir") {
+
+                        if(!data->items().empty()){
+                            data->removeAll();
+                        }
+
                         QList<FileFormat> dirs = FileFormat::makeFileFormat(reqData.data);
                         for(auto&p:dirs){
                             if(p.getType() == FileFormat::DIR){
@@ -53,7 +73,6 @@ void C_NetWork::newConnect(const User &u)
                             }
                         }
                     }
-
                     emit newData();
                 });
     }

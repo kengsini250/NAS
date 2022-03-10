@@ -13,6 +13,7 @@ int MyListModel::rowCount(const QModelIndex &parent) const
         return 0;
 
     // FIXME: Implement me!
+//    qDebug()<<"curr count : "<<items->items().size();
     return items->items().size();
 }
 
@@ -81,6 +82,12 @@ void MyListModel::set(MyListData *i)
     });
     connect(items, &MyListData::postItemAppended, this, [=]() {
         endInsertRows();
+    });
+    connect(items, &MyListData::preItemRemoved, this, [=]() {
+        removeRows(0,items->items().count());
+    });
+    connect(items, &MyListData::postItemRemoved, this, [=]() {
+//        endRemoveRows();
     });
     endResetModel();
 }

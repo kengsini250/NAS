@@ -6,6 +6,7 @@
 #include <QHostAddress>
 #include <QByteArray>
 #include <QDebug>
+#include <qqml.h>
 
 #include "FileFormat.h"
 #include "mylistdata.h"
@@ -13,15 +14,20 @@
 class C_NetWork : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
 public:
     explicit C_NetWork(QObject *parent = nullptr);
 
     void write2server(const Request&);
     Request getFromServer();
-    void Refresh();
+
+    Q_INVOKABLE void Refresh();
+    Q_INVOKABLE void changeDIR(int index);
+    Q_INVOKABLE void changeDIR(const QString&);
+    Q_INVOKABLE void removeAll();
 public slots:
     void newConnect(const User&);
-    void newConnect(const QString&addr,const QString&account,const QString&password);
+    Q_INVOKABLE void newConnect(const QString&addr,const QString&account,const QString&password);
     MyListData*get(){return data;}
 private:
     QTcpSocket *tcpClient;

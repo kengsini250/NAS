@@ -23,3 +23,10 @@ void MyListData::append(const Data &d)
     data.append(d);
     emit postItemAppended();
 }
+
+void MyListData::removeAll()
+{
+    emit preItemRemoved();
+    data.clear();
+    emit postItemRemoved();
+}
