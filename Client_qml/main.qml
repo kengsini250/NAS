@@ -28,7 +28,8 @@ Window {
 
     MyListView {
         id: myListView
+        y:30
         width: parent.width
-        height: parent.height
+        height: parent.height-menuBar.height
     }
 }

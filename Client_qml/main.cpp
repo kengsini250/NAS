@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
     //qmlRegisterType<C_NetWork>("NetWork",1,0,"C_NetWork");
     qmlRegisterType<MyListModel>("MyListModel",1,0,"MyListModel");
     C_NetWork* c_network = new C_NetWork;
-    MyListData* data = new MyListData;
     //==================================================
 
     //qml
@@ -27,14 +26,18 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
 
     engine.rootContext()->setContextProperty("c_network",c_network);
-    engine.rootContext()->setContextProperty(QStringLiteral("myData"), data);
+    engine.rootContext()->setContextProperty(QStringLiteral("myData"), new MyListData);//初始化
     engine.load(url);
     //==================================================
 
     //update
-    QObject::connect(c_network,&C_NetWork::newData,data,[&]{
+    QObject::connect(c_network,&C_NetWork::newData,[&]{
+        MyListData* data;
         data = c_network->get();
-        engine.rootContext()->setContextProperty(QStringLiteral("myData"), data);
+//        for(auto&p:data->items()){
+//            qDebug()<<p.name;
+//        }
+        engine.rootContext()->setContextProperty(QStringLiteral("myData"), data);//实际赋值
     });
     //==================================================
 
