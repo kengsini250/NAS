@@ -6,11 +6,6 @@ Item {
     ListView {
         id: listview
         anchors.fill: parent
-        anchors.topMargin: 30
-
-        x:0
-        y:0
-        height:main_root.height-menuBar.height
     }
 }
 
