@@ -76,13 +76,6 @@ void MyListModel::set(MyListData *i)
 {
     beginResetModel();
     items = i;
-    connect(items, &MyListData::preItemAppended, this, [=]() {
-        const int index = items->items().size();
-        beginInsertRows(QModelIndex(), index, index);
-    });
-    connect(items, &MyListData::postItemAppended, this, [=]() {
-        endInsertRows();
-    });
     endResetModel();
 }
 

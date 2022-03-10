@@ -19,9 +19,7 @@ bool MyListData::set(int index, const Data &d)
 
 void MyListData::append(const Data &d)
 {
-    emit preItemAppended();
     data.append(d);
-    emit postItemAppended();
 }
 
 void MyListData::removeAll()

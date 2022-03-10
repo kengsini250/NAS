@@ -17,9 +17,6 @@ public:
     explicit MyListData(QObject *parent = nullptr);
     QVector<Data> items() const;
     bool set(int index,const Data&d);
-signals:
-    void preItemAppended();
-    void postItemAppended();
 public slots:
     void append(const Data&d);
     void removeAll();
