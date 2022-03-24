@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QList>
+#include <QByteArray>
 #include <QDebug>
 
 typedef struct{
@@ -12,8 +13,8 @@ typedef struct{
 struct Request
 {
     QString title;
-    QString data;
-    struct User {};
+    QByteArray data;
+    qintptr dataSize=0;
 };
 
 class FileFormat{
@@ -21,7 +22,7 @@ public:
     enum Format{_NULL,DIR,FILE};
     Q_ENUMS(Format)
 
-    FileFormat(FileFormat::Format a,QString b);
+    FileFormat(FileFormat::Format a, QString b);
     FileFormat::Format getType() const;
     QString getName() const;
     QString getDir() const;

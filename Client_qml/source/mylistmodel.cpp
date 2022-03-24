@@ -44,7 +44,7 @@ bool MyListModel::setData(const QModelIndex &index, const QVariant &value, int r
         entry.picPath = value.toString();
     } else if (role == Roles::B)
     {
-        entry.name = value.toString();
+        entry.name = value.toString().toUtf8();
     }
 
 
