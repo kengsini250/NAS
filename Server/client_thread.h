@@ -3,19 +3,13 @@
 
 #include <QObject>
 #include <QTcpSocket>
-#include "Status.h"
 //#include "client.h"
 #include <QMutex>
 #include <QDataStream>
 
+#include "Status.h"
 #include "dir.h"
 
-struct Request
-{
-    QString title;
-    QString data;
-    struct User {};
-};
 
 class ClientThread : public QObject
 {
@@ -24,10 +18,14 @@ public:
     explicit ClientThread(QObject *parent = nullptr, qintptr id = -1);
 
 public slots:
-    void changeStatus(TcpStatus s);
     void run();
     void write2client(const QString&, const QString&);
     Request getFromClient();
+
+    void changeStatus(TcpStatus s)
+    {
+        status = s;
+    }
 
 private:
     QString allFiles = "";
@@ -36,6 +34,10 @@ private:
     TcpStatus status = TcpStatus::Waiting;
     Dir* dir;
     QMutex lock;
+        QFile file;
+    qintptr fileSize = 0;
+    qintptr sendSize = 0;
+
 signals:
     void sendAllFiles();
     void disconnected();

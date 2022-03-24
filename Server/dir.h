@@ -11,9 +11,13 @@ class Dir : public QObject
 public:
 	Dir(QObject* parent = Q_NULLPTR);
 	Dir(const QString& ,QObject* parent = Q_NULLPTR);
+	QString path();
 	void changeDir(const QString&);
-
 	void getAllFiles(QString&);
+	bool isDir(const QString&);
+	qintptr fileSize(const QString&);
+
+	QString filePath(const QString&);
 private:
 	QString root ="";
 	QDir dir;

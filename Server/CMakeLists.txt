@@ -22,7 +22,7 @@ add_executable(NAS_Server
   Status.h
   client.h client.cpp
   dir.h dir.cpp
-)
+  )
 target_link_libraries(NAS_Server 
 Qt::Core 
 Qt::Network
