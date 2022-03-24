@@ -1,7 +1,15 @@
 import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
 import MyListModel 1.0
 
 MyListViewForm {
+
+    property int currFile
+
+    listview.model: MyListModel {
+        items: myData
+    }
 
     listview.delegate:Item{
         width: 640
@@ -28,15 +36,46 @@ MyListViewForm {
 
         MouseArea{
             anchors.fill: parent
-            onDoubleClicked: {
-                c_network.changeDIR(index);
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+            onClicked:function(mouse) {
+                if(mouse.button === Qt.LeftButton){
+                }
+                else if(mouse.button === Qt.RightButton){
+                    currFile = index
+                    right_click_menu.popup()
+                }
             }
+
+            onDoubleClicked: function(mouse){
+                if(mouse.button === Qt.LeftButton){
+                    c_network.changeDIR(index);
+                }
+            }
+        }//!MouseArea
+    }
+
+    Menu{
+        id:right_click_menu
+
+        MenuItem {
+            text: qsTr("Download")
+            onTriggered: {
+                c_network.download(currFile)
+            }
+        }
+        MenuItem {
+            text: qsTr("Cut")
+        }
+        MenuItem {
+            text: qsTr("Delete")
+        }
+        MenuItem {
+            text: qsTr("Copy")
         }
     }
 
-    listview.model: MyListModel {
-        items: myData
-    }
+
 }
 
 

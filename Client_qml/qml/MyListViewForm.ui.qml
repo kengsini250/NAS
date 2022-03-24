@@ -1,11 +1,15 @@
 import QtQuick
 
 Item {
+    height: 480
+    width: 640
+
     property alias listview: listview
 
     ListView {
         id: listview
-        anchors.fill: parent
+        height: 480
+        width: 640
     }
 }
 
