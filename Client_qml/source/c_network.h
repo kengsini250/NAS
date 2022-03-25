@@ -25,6 +25,7 @@ public:
 
     Q_INVOKABLE void Refresh();
     Q_INVOKABLE void changeDIR(int index);
+    Q_INVOKABLE void cdUp();
     Q_INVOKABLE void download(int index);
     Q_INVOKABLE void removeAll();
 

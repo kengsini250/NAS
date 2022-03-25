@@ -27,7 +27,8 @@ QList<FileFormat> FileFormat::makeFileFormat(const QString&data)
 
     for(auto p = currList.begin(); p != currList.end()-1; p++){
         QString format = (*p).split(' ').first();
-        QString currName = (*p).split(' ').last();
+        QString currName= (*p).mid(2);
+        
         if(format[0] == 'd')
             currFileList.push_back(FileFormat(Format::DIR,currName));
         if(format[0] == '-')

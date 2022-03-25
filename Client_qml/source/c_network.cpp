@@ -1,8 +1,6 @@
 #include "c_network.h"
 //#pragma execution_character_set("utf-8")
 
-int t_count=0;
-
 C_NetWork::C_NetWork(QObject *parent)
     : QObject{parent}
 {
@@ -25,7 +23,6 @@ Request C_NetWork::getFromServer()
 {
     QByteArray msg = tcpClient->readAll();
     QDataStream fromClient(&msg, QIODevice::ReadOnly);
-    //fromClient.setVersion(QDataStream::Qt_6_3);
     Request reqData;
     fromClient >>reqData.title >> reqData.data >>reqData.dataSize ;
     return reqData;
@@ -39,6 +36,11 @@ void C_NetWork::Refresh()
 void C_NetWork::changeDIR(int index)
 {
     changeDIR(data->items().at(index).name);
+}
+
+Q_INVOKABLE void C_NetWork::cdUp()
+{
+    write2server({"CDUP"});
 }
 
 void C_NetWork::changeDIR(const QString &msg)
@@ -70,11 +72,7 @@ void C_NetWork::newConnect(const User &u)
             [this] {
                 auto reqData = getFromServer();
 
-                //download test
-                QDir::setCurrent("D:\\Program\\QT\\NAS\\Test");
-                //!download test
-
-                if (reqData.title == "Dir") {
+                if (reqData.title == "DIR") {
 
                     if (!data->items().empty()) {
                         data->removeAll();
@@ -92,35 +90,31 @@ void C_NetWork::newConnect(const User &u)
                     emit newData();
                 }
 
-                if (reqData.title == "FileSize") {
+                if (reqData.title == "FILESIZE") {
                     fileSize = reqData.data.toLongLong();
-                    qDebug()<<"file size : "<<fileSize;
                     //download test
                     file.setFileName(currFileName.toUtf8());
-                    file.open(QIODevice::WriteOnly);
+                    QDir::setCurrent("D:\\Program\\QT\\NAS\\Test");
                     //!download test
                     write2server({ "START", ""});
                 }
 
-                if (reqData.title == "File") {
+                if (reqData.title == "FILE") {
+                    file.open(QIODevice::WriteOnly | QIODevice::Append);
                     qintptr len = file.write(reqData.data, reqData.dataSize);
                     downloadSize += len;
-                    //qDebug()<<++t_count <<" Get "<<len;
-                    //qDebug()<<"All "<< downloadSize;
                     if(downloadSize == fileSize){
-                        file.close();
-                        qDebug()<<"End";
                         write2server({ "END", ""});
                         downloadSize = 0;
-                        t_count=0;
                     }
                     else{
                         write2server({ "START", ""});
                     }
-                }
-                if (reqData.title == "End") {
                     file.close();
-                    qDebug()<<"End";
+                }
+
+                if (reqData.title == "END") {
+                    file.close();
                     downloadSize = 0;
                 }
 
