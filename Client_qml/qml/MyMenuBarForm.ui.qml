@@ -7,6 +7,7 @@ Item {
     width: 640
     property alias newAction: newAction
     property alias quitAction: quitAction
+    property alias cdupAction: cdupAction
 
     MenuBar {
         height: 30
@@ -30,7 +31,8 @@ Item {
         Menu {
             title: qsTr("&Edit")
             MenuItem {
-                text: qsTr("Cu&t")
+                id: cdupAction
+                text: qsTr("CdUp")
             }
         }
         Menu {

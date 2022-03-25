@@ -15,6 +15,7 @@ MyMenuBarForm {
     }
 
     newAction.onTriggered:newUser.show()
+    cdupAction.onTriggered:c_network.cdUp()
     quitAction.onTriggered: Qt.quit();
 }
 
