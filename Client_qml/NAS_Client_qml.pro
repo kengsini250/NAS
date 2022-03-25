@@ -1,5 +1,5 @@
 QT += quick network core
-CONFIG += c++17
+CONFIG += c++17 console
 
 SOURCES += \
         main.cpp \
@@ -18,7 +18,8 @@ qml/NewUser.qml \
 qml/NewUserForm.ui.qml \
 
 resources.prefix = /$${TARGET}
-RESOURCES += resources
+RESOURCES += resources \
+resource.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
