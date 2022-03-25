@@ -5,15 +5,20 @@ Server::Server()
     listen(QHostAddress::Any,55555);
 }
 
+int Server::connectingUsers()
+{
+    return allUsers.size();
+}
+
 void Server::incomingConnection(qintptr socketDescriptor)
 {
-    ClientThread* newUser = new ClientThread(0,socketDescriptor);
-    newUser->moveToThread(&thread);
-    connect(&thread,&QThread::started,newUser,&ClientThread::run);
-    connect(&thread,&QThread::finished,newUser,&QObject::deleteLater);
-    thread.start();
+    User* user = new User(socketDescriptor);
+    user->start();
+    allUsers.insert(socketDescriptor, user);
 
-    connect(newUser, &ClientThread::disconnected, this, [this] {
-        thread.quit(); 
+    connect(user, &User::disconnected, this, [this](qintptr id) {
+        User* curr = allUsers.find(id).value();
+        delete curr;
+        allUsers.remove(id);
         });
 }

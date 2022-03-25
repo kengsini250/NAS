@@ -65,9 +65,6 @@ void C_NetWork::newConnect(const User &u)
     tcpClient->waitForConnected();
     if(tcpClient->state()==QTcpSocket::ConnectedState)
     {
-        //first connect
-        write2server(Request{"FIRSTCONNECT", ""});
-
         connect(tcpClient, &QTcpSocket::readyRead, this,
             [this] {
                 auto reqData = getFromServer();

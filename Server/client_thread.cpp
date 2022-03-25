@@ -17,14 +17,14 @@ ClientThread::ClientThread(QObject *parent, qintptr id)
 
 void ClientThread::run()
 {
+    qDebug() << tcpClient->socketDescriptor();
+    dir->getAllFiles(allFiles);
+    write2client("DIR", allFiles.toUtf8());
+
     //connect(tcpClient, &Client::sendMsg, this, [this] (const QString&msg) {
     connect(tcpClient, &QTcpSocket::readyRead, this, [this] {
         Request reqData = getFromClient();
 
-        if (reqData.title == "FIRSTCONNECT") {
-            dir->getAllFiles(allFiles);
-            write2client("DIR", allFiles.toUtf8());
-        }
         if (reqData.title == "REFRESH") {
             dir->getAllFiles(allFiles);
             write2client("DIR", allFiles.toUtf8());
