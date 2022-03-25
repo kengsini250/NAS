@@ -39,7 +39,6 @@ private:
     qintptr sendSize = 0;
 
 signals:
-    void sendAllFiles();
     void disconnected();
 };
 

@@ -14,6 +14,7 @@ public:
 	QString path();
 	void changeDir(const QString&);
 	void getAllFiles(QString&);
+	void cdUp();
 	bool isDir(const QString&);
 	qintptr fileSize(const QString&);
 

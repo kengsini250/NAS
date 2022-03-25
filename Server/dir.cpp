@@ -32,7 +32,7 @@ void Dir::getAllFiles(QString&d)
 	//- fileName! 
 	for (auto p = list.begin(); p != list.end(); p++) {
 		//¹ýÂË"."
-		if ((*p).fileName() == ".")
+		if ((*p).fileName() == "." )
 			continue;
 
 		if ((*p).isDir()) {
@@ -45,6 +45,11 @@ void Dir::getAllFiles(QString&d)
 		data += "!";
 	}
 	d = data;
+}
+
+void Dir::cdUp()
+{
+	dir.cdUp();
 }
 
 bool Dir::isDir(const QString&name)
