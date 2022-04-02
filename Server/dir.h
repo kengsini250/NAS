@@ -17,6 +17,8 @@ public:
 	void cdUp();
 	bool isDir(const QString&);
 	qintptr fileSize(const QString&);
+	void newDir(const QString&);
+	void removeDir(const QString&);
 
 	QString filePath(const QString&);
 private:

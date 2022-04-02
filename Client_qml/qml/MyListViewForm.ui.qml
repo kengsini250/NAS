@@ -1,21 +1,16 @@
-import QtQuick
+﻿import QtQuick
 
 Item {
-    height: 480
-    width: 640
+    height: main_root.height - 30
+    width: main_root.width
 
     property alias listview: listview
 
     ListView {
         id: listview
-        height: 480
-        width: 640
+        //        y:30
+        height: main_root.height - 30
+        width: main_root.width
+        headerPositioning: ListView.OverlayHeader
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
-

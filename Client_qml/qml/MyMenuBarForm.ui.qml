@@ -1,52 +1,52 @@
-import QtQuick
+﻿import QtQuick
 import QtQuick.Controls
 
 Item {
     id: root
-    height: 480
-    width: 640
+    height: 30
+    width: main_root.width
     property alias newAction: newAction
     property alias quitAction: quitAction
     property alias cdupAction: cdupAction
+    property alias newDirAction: newDirAction
 
     MenuBar {
         height: 30
-        width: 640
+        width: main_root.width
 
         Menu {
-            title: qsTr("&File")
+            title: qsTr("文件")
             MenuItem {
                 id: newAction
-                text: qsTr("&New...")
+                text: qsTr("连接")
             }
             MenuItem {
-                text: qsTr("&Open...")
+                text: qsTr("设置")
             }
-            MenuSeparator {}
             MenuItem {
                 id: quitAction
-                text: qsTr("&Quit")
+                text: qsTr("退出")
             }
         }
         Menu {
-            title: qsTr("&Edit")
+            title: qsTr("选项")
             MenuItem {
                 id: cdupAction
-                text: qsTr("CdUp")
+                text: qsTr("上一级")
+            }
+            MenuItem {
+                id: newDirAction
+                text: qsTr("新建文件夹")
             }
         }
         Menu {
-            title: qsTr("&Help")
+            title: qsTr("帮助")
             MenuItem {
-                text: qsTr("&About")
+                text: qsTr("关于")
             }
         }
     }
 }
 
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
+
 

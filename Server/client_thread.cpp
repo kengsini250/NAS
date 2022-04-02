@@ -81,6 +81,16 @@ void ClientThread::run()
             sendSize = 0;
         }
     
+        if (reqData.title == "NEWDIR") {
+            //reqData.data
+            dir->newDir("test");
+        }
+
+        if (reqData.title == "NEWDIR") {
+            //reqData.data
+            dir->removeDir("test");
+        }
+
         //应该有更好的方法
         //状态机?
         /*

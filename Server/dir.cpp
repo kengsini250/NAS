@@ -70,6 +70,16 @@ qintptr Dir::fileSize(const QString& name)
 	return info.size();
 }
 
+void Dir::removeDir(const QString&name)
+{
+	dir.remove(name);
+}
+
+void Dir::newDir(const QString&name)
+{
+	dir.mkdir(name);
+}
+
 QString Dir::filePath(const QString&name)
 {
 	return dir.path() + "/" + name;

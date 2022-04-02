@@ -26,8 +26,10 @@ public:
     Q_INVOKABLE void Refresh();
     Q_INVOKABLE void changeDIR(int index);
     Q_INVOKABLE void cdUp();
-    Q_INVOKABLE void download(int index);
     Q_INVOKABLE void removeAll();
+    Q_INVOKABLE void download(int index);
+    Q_INVOKABLE void newDir();
+    Q_INVOKABLE void removeDir();
 
 public slots:
     Q_INVOKABLE void newConnect(const QString&addr,const QString&account,const QString&password);

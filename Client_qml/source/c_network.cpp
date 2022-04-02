@@ -54,6 +54,16 @@ void C_NetWork::download(int index)
     write2server({ "DOWNLOAD",data->items().at(index).name.toUtf8()});
 }
 
+void C_NetWork::newDir()
+{
+    write2server({ "NEWDIR"});
+}
+
+void C_NetWork::removeDir()
+{
+    write2server({ "REMOVEDIR"});
+}
+
 void C_NetWork::removeAll()
 {
     data->removeAll();

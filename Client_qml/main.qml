@@ -1,18 +1,19 @@
 import QtQuick
+import QtQuick.Layouts
 import "./qml/"
 
 //import NetWork 1.0
 
 Window {
     id:main_root
-    width: 640
-    height: 480
+    width: 800
+    height: 600
     visible: true
     title: qsTr("Hello World")
 
-//    C_NetWork{
-//        id:c_network
-//    }
+    //    C_NetWork{
+    //        id:c_network
+    //    }
 
     MyMenuBar{
         id:menuBar
@@ -32,4 +33,5 @@ Window {
         width: parent.width
         height: parent.height-menuBar.height
     }
+
 }
