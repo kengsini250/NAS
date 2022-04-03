@@ -72,12 +72,32 @@ qintptr Dir::fileSize(const QString& name)
 
 void Dir::removeDir(const QString&name)
 {
-	dir.remove(name);
+	bool end;
+	QString curr = dir.path() + "/" + name;
+	QFileInfo info(curr);
+	//qDebug() << curr;
+	if (info.isDir()) {
+		end = dir.rmdir(name);
+		//qDebug() << "remove dir : " << end;
+	}
+	else {
+		end = dir.remove(name);
+		//qDebug() << "remove file : " << end;
+	}
+
+
 }
 
-void Dir::newDir(const QString&name)
+void Dir::rename(const QString& name)
 {
-	dir.mkdir(name);
+	QStringList temp = name.split('!');
+	dir.rename(temp[0], temp[1]);
+}
+
+void Dir::newDir(const QString& name)
+{
+	bool end = dir.mkdir(name);
+	qDebug() << "new dir : " << name << " -> "<<end;
 }
 
 QString Dir::filePath(const QString&name)

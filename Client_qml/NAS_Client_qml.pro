@@ -16,6 +16,8 @@ qml/MyMenuBar.qml \
 qml/MyMenuBarForm.ui.qml \
 qml/NewUser.qml \
 qml/NewUserForm.ui.qml \
+qml/Rename.qml \
+qml/RenameForm.ui.qml \
 
 resources.prefix = /$${TARGET}
 RESOURCES += resources \

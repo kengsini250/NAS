@@ -19,6 +19,7 @@ public:
 	qintptr fileSize(const QString&);
 	void newDir(const QString&);
 	void removeDir(const QString&);
+	void rename(const QString& name);
 
 	QString filePath(const QString&);
 private:

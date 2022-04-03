@@ -7,6 +7,8 @@ MyListViewForm {
 
     property int currFile
     property int colorIndex : -1
+    property int curr_mouseX : -1
+    property int curr_mouseY : -1
 
     listview.model: MyListModel {
         items: myData
@@ -49,6 +51,10 @@ MyListViewForm {
             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
             onClicked:function(mouse) {
+                curr_mouseX = mouseX
+                curr_mouseY = mouseY
+
+
                 if(mouse.button === Qt.LeftButton){
                     if(colorIndex == -1){
                         colorIndex = index
@@ -66,11 +72,34 @@ MyListViewForm {
             }
 
             onDoubleClicked: function(mouse){
+                curr_mouseX = mouseX
+                curr_mouseY = mouseY
+
                 if(mouse.button === Qt.LeftButton){
                     c_network.changeDIR(index);
                 }
             }
         }//!MouseArea
+    }
+
+    Rename{
+        id:rename
+        x:curr_mouseX + main_root.x
+        y:curr_mouseY + main_root.y
+
+        onNewName:function(name){
+            c_network.rename(currFile,name)
+        }
+    }
+
+    Rename{
+        id:newdir
+        x:curr_mouseX + main_root.x
+        y:curr_mouseY + main_root.y
+
+        onNewDir:function(name){
+           c_network.newDir(name)
+        }
     }
 
     Menu{
@@ -85,13 +114,25 @@ MyListViewForm {
             MenuItem {
                 text: qsTr("新建文件夹")
                 onTriggered: {
-                    c_network.newDir()
+                    newdir.show()
                 }
             }
             MenuItem {
                 text: qsTr("删除")
                 onTriggered: {
-                    c_network.removeDir()
+                    c_network.removeDir(currFile)
+                }
+            }
+            MenuItem {
+                text: qsTr("重命名")
+                onTriggered: {
+                    rename.show()
+                }
+            }
+            MenuItem {
+                text: qsTr("刷新")
+                onTriggered: {
+                    c_network.refresh()
                 }
             }
         }

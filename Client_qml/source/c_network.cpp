@@ -28,7 +28,7 @@ Request C_NetWork::getFromServer()
     return reqData;
 }
 
-void C_NetWork::Refresh()
+void C_NetWork::refresh()
 {
     write2server({"REFRESH", ""});
 }
@@ -54,14 +54,25 @@ void C_NetWork::download(int index)
     write2server({ "DOWNLOAD",data->items().at(index).name.toUtf8()});
 }
 
-void C_NetWork::newDir()
+void C_NetWork::newDir(const QString& name)
 {
-    write2server({ "NEWDIR"});
+    write2server({ "NEWDIR",name.toLocal8Bit()});
+    refresh();
 }
 
-void C_NetWork::removeDir()
+void C_NetWork::removeDir(int index)
 {
-    write2server({ "REMOVEDIR"});
+    currFileName = data->items().at(index).name;
+    write2server({ "REMOVEDIR",currFileName.toLocal8Bit()});
+    refresh();
+}
+
+void C_NetWork::rename(int index, const QString &name)
+{
+    currFileName = data->items().at(index).name;
+    // source name!new name
+    QString temp = currFileName + "!" + name;
+    write2server({"RENAME",temp.toLocal8Bit()});
 }
 
 void C_NetWork::removeAll()

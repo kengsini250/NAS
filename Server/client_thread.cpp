@@ -82,13 +82,15 @@ void ClientThread::run()
         }
     
         if (reqData.title == "NEWDIR") {
-            //reqData.data
-            dir->newDir("test");
+            dir->newDir(reqData.data);
         }
 
-        if (reqData.title == "NEWDIR") {
-            //reqData.data
-            dir->removeDir("test");
+        if (reqData.title == "REMOVEDIR") {
+            dir->removeDir(reqData.data);
+        }
+
+        if (reqData.title == "RENAME") {
+            dir->rename(reqData.data);
         }
 
         //应该有更好的方法
