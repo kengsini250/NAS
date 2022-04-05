@@ -9,6 +9,8 @@ Window {
 
     RenameForm {
         id:ui
+        x: 5
+        y: 25
 
         button_OK.onClicked:{
             newName(textEdit_name.text)
@@ -18,5 +20,11 @@ Window {
 
         button_Cancel.onClicked:close()
 
+        onEmitSelectAll: {
+            textEdit_name.selectAll()
+            console.log("here")
+        }
     }
+
+
 }

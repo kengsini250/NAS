@@ -2,9 +2,12 @@ import QtQuick
 import QtQuick.Controls
 
 Item {
+    id: renameUI
     property alias button_OK: button_ok
     property alias button_Cancel: button_cancel
     property alias textEdit_name: textEdit_name
+
+    signal emitSelectAll
 
     width: 390
     height: 150
@@ -34,5 +37,8 @@ Item {
         width: 324
         height: 31
         font.pixelSize: 12
+        MouseArea {
+            onDoubleClicked: renameUI.emitSelectAll
+        }
     }
 }

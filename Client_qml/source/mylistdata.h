@@ -8,6 +8,7 @@
 struct Data{
     QString picPath;
     QString name;
+    FileFormat::Format fileformat;
 };
 
 class MyListData : public QObject

@@ -5,6 +5,9 @@
 #include <QFile>
 #include <QFileInfo>
 
+#include <QDomDocument>
+#include <QDomNamedNodeMap>
+
 class Dir : public QObject
 {
 	Q_OBJECT

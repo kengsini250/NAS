@@ -3,6 +3,24 @@
 
 Dir::Dir(QObject* parent):QObject(parent)
 {
+	QString filePath = "config.xml";
+	QFile xml(filePath);
+	xml.open(QFile::ReadOnly);
+
+	QDomDocument domDocument;
+	domDocument.setContent(&xml);
+	QDomElement _root = domDocument.documentElement();
+	QDomNode node_a = _root.firstChild();//root
+	while (!node_a.isNull())
+	{
+		QDomElement node_all = node_a.toElement();//rootDir
+		QDomElement tag1 = node_all.firstChildElement("dir");
+		root = tag1.text();
+		node_a = node_a.nextSibling();
+	}
+
+	xml.close();
+	dir.setPath(root);
 }
 
 Dir::Dir(const QString& s,QObject* parent) : QObject(parent)
@@ -97,7 +115,7 @@ void Dir::rename(const QString& name)
 void Dir::newDir(const QString& name)
 {
 	bool end = dir.mkdir(name);
-	qDebug() << "new dir : " << name << " -> "<<end;
+	//qDebug() << "new dir : " << name << " -> "<<end;
 }
 
 QString Dir::filePath(const QString&name)

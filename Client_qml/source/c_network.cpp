@@ -51,20 +51,23 @@ void C_NetWork::changeDIR(const QString &msg)
 void C_NetWork::download(int index)
 {
     currFileName = data->items().at(index).name;
-    write2server({ "DOWNLOAD",data->items().at(index).name.toUtf8()});
+    auto fileType = data->items().at(index).fileformat;
+
+    if(fileType == FileFormat::FILE)
+        write2server({ "DOWNLOADFILE",data->items().at(index).name.toUtf8()});
+    if(fileType == FileFormat::DIR)
+        write2server({ "DOWNLOADDIR",data->items().at(index).name.toUtf8()});
 }
 
 void C_NetWork::newDir(const QString& name)
 {
     write2server({ "NEWDIR",name.toLocal8Bit()});
-    refresh();
 }
 
 void C_NetWork::removeDir(int index)
 {
     currFileName = data->items().at(index).name;
     write2server({ "REMOVEDIR",currFileName.toLocal8Bit()});
-    refresh();
 }
 
 void C_NetWork::rename(int index, const QString &name)
@@ -99,10 +102,10 @@ void C_NetWork::newConnect(const User &u)
                     QList<FileFormat> dirs = FileFormat::makeFileFormat(reqData.data);
                     for (auto& p : dirs) {
                         if (p.getType() == FileFormat::DIR) {
-                            data->append({ "qrc:///pic/dir.png",p.getName()});
+                            data->append({ "qrc:///pic/dir.png",p.getName(),FileFormat::DIR});
                         }
                         if (p.getType() == FileFormat::FILE) {
-                            data->append({ "qrc:///pic/file.png",p.getName()});
+                            data->append({ "qrc:///pic/file.png",p.getName(),FileFormat::FILE});
                         }
                     }
                     emit newData();
@@ -121,7 +124,7 @@ void C_NetWork::newConnect(const User &u)
                     file.open(QIODevice::WriteOnly | QIODevice::Append);
                     qintptr len = file.write(reqData.data, reqData.dataSize);
                     downloadSize += len;
-                    if(downloadSize == fileSize){
+                    if(downloadSize >= fileSize){
                         write2server({ "END", ""});
                         downloadSize = 0;
                     }

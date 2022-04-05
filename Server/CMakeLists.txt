@@ -14,6 +14,7 @@ set(CMAKE_PREFIX_PATH "E:\\Qt\\6.3.0\\msvc2019_64\\lib\\cmake")
 
 find_package(Qt6 COMPONENTS Core REQUIRED)
 find_package(Qt6 COMPONENTS Network REQUIRED)
+find_package(Qt6 COMPONENTS Xml REQUIRED)
 
 add_executable(NAS_Server
   main.cpp
@@ -23,7 +24,9 @@ add_executable(NAS_Server
   client.h client.cpp
   dir.h dir.cpp
   user.h user.cpp)
+
 target_link_libraries(NAS_Server 
-Qt::Core 
-Qt::Network
+Qt6::Core 
+Qt6::Network
+Qt6::Xml
 )

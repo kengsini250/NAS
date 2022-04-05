@@ -3,13 +3,12 @@
 #include <QThread>
 #pragma execution_character_set("utf-8")
 
-const QString testPath = "E:\\Download";
 #define BLOCK_SIZE 1024*16
 
 ClientThread::ClientThread(QObject *parent, qintptr id)
     : QObject(parent)
 {
-    dir = new Dir(testPath, this);
+    dir = new Dir(this);
     //tcpClient = new Client(iid,this);
     tcpClient = new QTcpSocket(this);
     tcpClient->setSocketDescriptor(id);
@@ -25,37 +24,48 @@ void ClientThread::run()
     connect(tcpClient, &QTcpSocket::readyRead, this, [this] {
         Request reqData = getFromClient();
 
+        //刷新
         if (reqData.title == "REFRESH") {
             dir->getAllFiles(allFiles);
             write2client("DIR", allFiles.toUtf8());
         }
+
+        //更改文件夹
         if (reqData.title == "CHANGEDIR") {
             dir->changeDir(reqData.data);
             dir->getAllFiles(allFiles);
             write2client("DIR", allFiles.toUtf8());
         }
+
+        //上一级文件夹
         if (reqData.title == "CDUP") {
             dir->cdUp();
             dir->getAllFiles(allFiles);
             write2client("DIR", allFiles.toUtf8());
         }
-        if (reqData.title == "DOWNLOAD") {
-            bool isDir = dir->isDir(reqData.data);
+
+        //下载文件夹
+        if (reqData.title == "DOWNLOADDIR") {
+        }
+        //下载文件
+        if (reqData.title == "DOWNLOADFILE") {
+            //返回文件大小
             fileSize = dir->fileSize(reqData.data);
             write2client("FILESIZE", QString::number(fileSize));
-            
+
+            //定位&打开文件，等待传送
             if (file.isOpen())
                 file.close();
             file.setFileName(reqData.data);
             QDir::setCurrent(dir->path());
             file.open(QIODevice::ReadOnly);
         }
-
+        //传送数据包
         if (reqData.title == "START") {
-
             QByteArray temp;
             QDataStream toClient(&temp, QIODevice::WriteOnly);
 
+            //每个数据包的大小
             auto buf = file.read( BLOCK_SIZE );
             sendSize += buf.size();
 
@@ -65,6 +75,7 @@ void ClientThread::run()
                 sendSize = 0;
             }
             else {
+                //传送数据包
                 Request req;
                 req.title = "FILE";
                 req.data = buf;
@@ -76,21 +87,31 @@ void ClientThread::run()
 
         }
 
+        //下载结束
         if (reqData.title == "END") {
             file.close();
             sendSize = 0;
         }
     
+        //新建文件夹
         if (reqData.title == "NEWDIR") {
             dir->newDir(reqData.data);
+            dir->getAllFiles(allFiles);
+            write2client("DIR", allFiles.toUtf8());
         }
 
+        //删除文件夹
         if (reqData.title == "REMOVEDIR") {
             dir->removeDir(reqData.data);
+            dir->getAllFiles(allFiles);
+            write2client("DIR", allFiles.toUtf8());
         }
 
+        //重命名
         if (reqData.title == "RENAME") {
             dir->rename(reqData.data);
+            dir->getAllFiles(allFiles);
+            write2client("DIR", allFiles.toUtf8());
         }
 
         //应该有更好的方法
