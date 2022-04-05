@@ -58,10 +58,12 @@ void ClientThread::run()
                 file.close();
             file.setFileName(reqData.data);
             QDir::setCurrent(dir->path());
-            file.open(QIODevice::ReadOnly);
+            //file.open(QIODevice::ReadOnly);
         }
         //传送数据包
         if (reqData.title == "START") {
+            file.open(QIODevice::ReadOnly);
+            file.seek(sendSize);
             QByteArray temp;
             QDataStream toClient(&temp, QIODevice::WriteOnly);
 
@@ -84,7 +86,7 @@ void ClientThread::run()
                 tcpClient->write(temp);
                 tcpClient->waitForBytesWritten();
             }
-
+            file.close();
         }
 
         //下载结束
