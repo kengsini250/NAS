@@ -78,6 +78,11 @@ void C_NetWork::rename(int index, const QString &name)
     write2server({"RENAME",temp.toLocal8Bit()});
 }
 
+void C_NetWork::upload(const QString &name)
+{
+    write2server({"UPLOAD",name.toLocal8Bit()});
+}
+
 void C_NetWork::removeAll()
 {
     data->removeAll();

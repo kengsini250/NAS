@@ -31,6 +31,7 @@ public:
     Q_INVOKABLE void newDir(const QString& name);
     Q_INVOKABLE void removeDir(int index);
     Q_INVOKABLE void rename(int index,const QString& name);
+    Q_INVOKABLE void upload(const QString& name);
 
 public slots:
     Q_INVOKABLE void newConnect(const QString&addr,const QString&account,const QString&password);

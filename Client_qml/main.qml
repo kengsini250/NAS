@@ -31,4 +31,14 @@ Window {
             c_network.newConnect(ipAdr, acc, pw)
         }
     }
+
+    DropArea {
+        anchors.fill: parent
+        onDropped: drop => {
+                       if (drop.hasText) {
+                           c_network.upload(drop.text)
+                           //  file:///E:/sdf/sdf.exe
+                       }
+                   }
+    }
 }
