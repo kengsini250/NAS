@@ -1,6 +1,8 @@
 #include "c_network.h"
 //#pragma execution_character_set("utf-8")
 
+static QString testPath = "D:\\Program\\QT\\NAS\\Test";
+
 C_NetWork::C_NetWork(QObject *parent)
     : QObject{parent}
 {
@@ -118,14 +120,12 @@ void C_NetWork::newConnect(const User &u)
 
                 if (reqData.title == "FILESIZE") {
                     fileSize = reqData.data.toLongLong();
-                    //download test
-                    file.setFileName(currFileName.toUtf8());
-                    QDir::setCurrent("D:\\Program\\QT\\NAS\\Test");
-                    //!download test
                     write2server({ "START", ""});
                 }
 
                 if (reqData.title == "FILE") {
+
+                    QFile file(testPath+"\\"+currFileName);
                     file.open(QIODevice::WriteOnly | QIODevice::Append);
                     qintptr len = file.write(reqData.data, reqData.dataSize);
                     downloadSize += len;
@@ -140,7 +140,6 @@ void C_NetWork::newConnect(const User &u)
                 }
 
                 if (reqData.title == "END") {
-                    file.close();
                     downloadSize = 0;
                 }
 

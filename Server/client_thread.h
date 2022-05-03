@@ -10,6 +10,7 @@
 #include "Status.h"
 #include "dir.h"
 
+#define BLOCK_SIZE 1024*16
 
 class ClientThread : public QObject
 {
@@ -34,9 +35,9 @@ private:
     TcpStatus status = TcpStatus::Waiting;
     Dir* dir;
     QMutex lock;
-        QFile file;
     qintptr fileSize = 0;
     qintptr sendSize = 0;
+    QString currFileName = "";
 
 signals:
     void disconnected();

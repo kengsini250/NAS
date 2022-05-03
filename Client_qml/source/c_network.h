@@ -40,7 +40,6 @@ public slots:
 private:
     QTcpSocket *tcpClient;
     MyListData *data;
-    QFile file;
     QString currFileName="";
     qintptr fileSize = 0;
     qintptr downloadSize = 0;

@@ -3,8 +3,6 @@
 #include <QThread>
 #pragma execution_character_set("utf-8")
 
-#define BLOCK_SIZE 1024*16
-
 ClientThread::ClientThread(QObject *parent, qintptr id)
     : QObject(parent)
 {
@@ -47,21 +45,20 @@ void ClientThread::run()
         //下载文件夹
         if (reqData.title == "DOWNLOADDIR") {
         }
+
         //下载文件
         if (reqData.title == "DOWNLOADFILE") {
             //返回文件大小
             fileSize = dir->fileSize(reqData.data);
             write2client("FILESIZE", QString::number(fileSize));
-
-            //定位&打开文件，等待传送
-            if (file.isOpen())
-                file.close();
-            file.setFileName(reqData.data);
-            QDir::setCurrent(dir->path());
-            //file.open(QIODevice::ReadOnly);
+            currFileName = reqData.data;
         }
+
         //传送数据包
         if (reqData.title == "START") {
+            //定位&打开文件，等待传送
+            QString _path = dir->path();
+            QFile file(_path+"/"+ currFileName);
             file.open(QIODevice::ReadOnly);
             file.seek(sendSize);
             QByteArray temp;
@@ -91,8 +88,9 @@ void ClientThread::run()
 
         //下载结束
         if (reqData.title == "END") {
-            file.close();
-            sendSize = 0;
+            //清理线程
+            sendSize = 0; 
+            currFileName = "";
         }
     
         //新建文件夹
