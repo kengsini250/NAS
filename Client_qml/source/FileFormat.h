@@ -10,12 +10,46 @@ typedef struct{
     QString addr,account,password;
 }User;
 
+struct FileInfo{
+    qintptr downloaded;
+    qintptr filesize;
+    bool finished = false;
+    QString name;
+};
+
+enum TcpStatus
+{
+    Null = 0,
+    FILE_NAME,
+    FILE_INFO,
+    FILE_READY,
+    FILE_GET,
+    FILE_DATA,
+    FILE_END,
+
+    REFRESH,
+    CHANGEDIR,
+    DIR,
+    NEWDIR,
+    REMOVEDIR,
+    CDUP,
+    RENAME,
+
+    DOWNLOADDIR,
+};
+Q_ENUMS(TcpStatus)
+
 struct Request
 {
-    QString title;
-    QByteArray data;
-    qintptr dataSize=0;
+    int title = TcpStatus::Null;
+    QString filename = "";
+    qintptr dataSize = 0;
+    QByteArray data = "";
+    bool ready = false;
+    bool end = false;
 };
+
+void printRequest(const Request& req);
 
 class FileFormat{
 public:

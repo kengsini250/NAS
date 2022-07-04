@@ -23,7 +23,8 @@ add_executable(NAS_Server
   Status.h
   client.h client.cpp
   dir.h dir.cpp
-  user.h user.cpp)
+  user.h user.cpp 
+)
 
 target_link_libraries(NAS_Server 
 Qt6::Core 

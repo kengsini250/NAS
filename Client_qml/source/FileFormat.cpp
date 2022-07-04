@@ -36,3 +36,12 @@ QList<FileFormat> FileFormat::makeFileFormat(const QString&data)
     }
     return currFileList;
 }
+
+void printRequest(const Request &req)
+{
+    qDebug() << "title : [" << req.title << "]";
+    qDebug() << "filename : [" << req.filename << "]";
+    qDebug() << "dataSize : [" << req.dataSize << "]";
+    qDebug() << "ready : [" << req.ready << "]";
+    qDebug() << "end : [" << req.end << "]";
+}

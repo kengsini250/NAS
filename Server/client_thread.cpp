@@ -2,6 +2,16 @@
 #include <QDebug>
 #include <QThread>
 #pragma execution_character_set("utf-8")
+#pragma warning(disable:4828)
+
+void printRequest(const Request& req)
+{
+    qDebug() << "title : [" << req.title << "]";
+    qDebug() << "filename : [" << req.filename << "]";
+    qDebug() << "dataSize : [" << req.dataSize << "]";
+    qDebug() << "ready : [" << req.ready << "]";
+    qDebug() << "end : [" << req.end << "]";
+}
 
 ClientThread::ClientThread(QObject *parent, qintptr id)
     : QObject(parent)
@@ -10,137 +20,132 @@ ClientThread::ClientThread(QObject *parent, qintptr id)
     //tcpClient = new Client(iid,this);
     tcpClient = new QTcpSocket(this);
     tcpClient->setSocketDescriptor(id);
+
+}
+
+ClientThread::~ClientThread()
+{
+}
+
+QTcpSocket* ClientThread::getSocket()
+{
+    return tcpClient;
 }
 
 void ClientThread::run()
 {
     qDebug() << tcpClient->socketDescriptor();
     dir->getAllFiles(allFiles);
-    write2client("DIR", allFiles.toUtf8());
-
+    write2client(TcpStatus::DIR, allFiles.toUtf8());
+    
     //connect(tcpClient, &Client::sendMsg, this, [this] (const QString&msg) {
     connect(tcpClient, &QTcpSocket::readyRead, this, [this] {
         Request reqData = getFromClient();
 
         //刷新
-        if (reqData.title == "REFRESH") {
+        if (reqData.title == TcpStatus::REFRESH) {
             dir->getAllFiles(allFiles);
-            write2client("DIR", allFiles.toUtf8());
+            write2client(TcpStatus::DIR, allFiles.toUtf8());
         }
 
         //更改文件夹
-        if (reqData.title == "CHANGEDIR") {
+        if (reqData.title == TcpStatus::CHANGEDIR) {
             dir->changeDir(reqData.data);
             dir->getAllFiles(allFiles);
-            write2client("DIR", allFiles.toUtf8());
+            write2client(TcpStatus::DIR, allFiles.toUtf8());
         }
 
         //上一级文件夹
-        if (reqData.title == "CDUP") {
+        if (reqData.title == TcpStatus::CDUP) {
             dir->cdUp();
             dir->getAllFiles(allFiles);
-            write2client("DIR", allFiles.toUtf8());
+            write2client(TcpStatus::DIR, allFiles.toUtf8());
         }
 
-        //下载文件夹
-        if (reqData.title == "DOWNLOADDIR") {
+        //新建文件夹
+        if (reqData.title == TcpStatus::NEWDIR) {
+            dir->newDir(reqData.data);
+            dir->getAllFiles(allFiles);
+            write2client(TcpStatus::DIR, allFiles.toUtf8());
         }
 
-        //下载文件
-        if (reqData.title == "DOWNLOADFILE") {
-            //返回文件大小
-            fileSize = dir->fileSize(reqData.data);
-            write2client("FILESIZE", QString::number(fileSize));
-            currFileName = reqData.data;
+        //删除文件夹
+        if (reqData.title == TcpStatus::REMOVEDIR) {
+            dir->removeDir(reqData.data);
+            dir->getAllFiles(allFiles);
+            write2client(TcpStatus::DIR, allFiles.toUtf8());
         }
 
-        //传送数据包
-        if (reqData.title == "START") {
-            //定位&打开文件，等待传送
-            QString _path = dir->path();
-            QFile file(_path+"/"+ currFileName);
+        //重命名
+        if (reqData.title == TcpStatus::RENAME) {
+            dir->rename(reqData.data);
+            dir->getAllFiles(allFiles);
+            write2client(TcpStatus::DIR, allFiles.toUtf8());
+        }
+
+
+
+        //-----------------------main---------------------------------------------------------------
+        if (reqData.title == TcpStatus::FILE_NAME) {
+
+            Request req{
+                .title = TcpStatus::FILE_INFO,
+                .filename = reqData.filename,
+                .dataSize = dir->fileSize(reqData.filename)
+            };
+            write2client(req);
+        }
+
+        if (reqData.title == TcpStatus::FILE_READY) {
+            if (reqData.ready == true) {
+                //check file & server
+                Request req{
+                                    .title = TcpStatus::FILE_READY,
+                                    .filename = reqData.filename,
+                                    .ready = true
+                };
+                write2client(req);
+            }
+            else {}
+
+            download_finished.insert(reqData.filename, 0);
+        }
+
+        //download start
+        if (reqData.title == TcpStatus::FILE_GET) {
+
+            QFile file(dir->filePath(reqData.filename));
             file.open(QIODevice::ReadOnly);
-            file.seek(sendSize);
+            file.seek(download_finished.value(reqData.filename));
             QByteArray temp;
             QDataStream toClient(&temp, QIODevice::WriteOnly);
 
             //每个数据包的大小
-            auto buf = file.read( BLOCK_SIZE );
-            sendSize += buf.size();
+            auto buf = file.read(BLOCK_SIZE);
+            download_finished[reqData.filename] += buf.size();
 
-            if (buf.isEmpty()) {
-                write2client("END", "");
-                file.close();
-                sendSize = 0;
-            }
-            else {
-                //传送数据包
-                Request req;
-                req.title = "FILE";
-                req.data = buf;
-                req.dataSize = buf.size();
-                toClient << req.title << req.data << req.dataSize;
-                tcpClient->write(temp);
-                tcpClient->waitForBytesWritten();
-            }
+            Request req;
+            req.title = TcpStatus::FILE_DATA;
+            req.filename = reqData.filename;
+            req.data = buf;
+            req.dataSize = buf.size();
+            req.ready = true;
+            toClient << req.title << req.filename << req.dataSize << req.data << req.ready << req.end;
+            tcpClient->write(temp);
+            tcpClient->waitForBytesWritten();
+
             file.close();
         }
 
         //下载结束
-        if (reqData.title == "END") {
-            //清理线程
-            sendSize = 0; 
-            currFileName = "";
+        if (reqData.title == TcpStatus::FILE_END) {
+            download_finished.remove(reqData.filename);
+            write2client(Request{
+                                    .title = TcpStatus::FILE_END,
+                                    .filename = reqData.filename,
+                                    .ready = false,
+                                    .end = true});
         }
-    
-        //新建文件夹
-        if (reqData.title == "NEWDIR") {
-            dir->newDir(reqData.data);
-            dir->getAllFiles(allFiles);
-            write2client("DIR", allFiles.toUtf8());
-        }
-
-        //删除文件夹
-        if (reqData.title == "REMOVEDIR") {
-            dir->removeDir(reqData.data);
-            dir->getAllFiles(allFiles);
-            write2client("DIR", allFiles.toUtf8());
-        }
-
-        //重命名
-        if (reqData.title == "RENAME") {
-            dir->rename(reqData.data);
-            dir->getAllFiles(allFiles);
-            write2client("DIR", allFiles.toUtf8());
-        }
-
-        //应该有更好的方法
-        //状态机?
-        /*
-        bool flag = true;
-        while (flag) {
-            switch (status)
-            {
-            case TcpStatus::Waiting:
-                flag = false;
-                break;
-
-            case TcpStatus::New:
-                //qDebug() << " new : " << tcpClient->socketDescriptor();
-                changeStatus(TcpStatus::SendDir);
-                break;
-            case TcpStatus::SendDir:
-                //emit sendAllFiles();
-                changeStatus(TcpStatus::Waiting);
-                break;
-            case TcpStatus::Download_Start:
-                changeStatus(TcpStatus::Waiting);
-                break;
-            }
-        }
-        */
-
-
     },Qt::DirectConnection);
 
     connect(tcpClient, &QTcpSocket::disconnected, this, [this] {
@@ -148,14 +153,19 @@ void ClientThread::run()
         });
 }
 
-void ClientThread::write2client(const QString&title, const QString&data)
+void ClientThread::write2client(int title, const QString&data)
 {
-    QByteArray temp;
-    QDataStream toClient(&temp, QIODevice::WriteOnly);
     Request req;
     req.title = title;
     req.data = data.toUtf8();
-    toClient  << req.title << req.data;
+    write2client(req);
+}
+
+void ClientThread::write2client(const Request&req)
+{
+    QByteArray temp;
+    QDataStream toClient(&temp, QIODevice::WriteOnly);
+    toClient << req.title << req.filename << req.dataSize << req.data << req.ready << req.end;
     tcpClient->write(temp);
 }
 
@@ -163,7 +173,7 @@ Request ClientThread::getFromClient()
 {
     QByteArray msg = tcpClient->readAll();
     QDataStream fromClient(&msg, QIODevice::ReadOnly);
-    Request reqData;
-    fromClient >> reqData.title >> reqData.data;
-    return reqData;
+    Request req;
+    fromClient >> req.title >> req.filename >> req.dataSize >> req.data >> req.ready >> req.end;
+    return req;
 }

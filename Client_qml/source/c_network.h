@@ -12,6 +12,7 @@
 
 #include "FileFormat.h"
 #include "mylistdata.h"
+#include "ThreadPool.h"
 
 class C_NetWork : public QObject
 {
@@ -19,6 +20,7 @@ class C_NetWork : public QObject
     QML_ELEMENT
 public:
     explicit C_NetWork(QObject *parent = nullptr);
+    ~C_NetWork();
 
     void write2server(const Request&);
     Request getFromServer();
@@ -41,11 +43,11 @@ private:
     QTcpSocket *tcpClient;
     MyListData *data;
     QString currFileName="";
-    qintptr fileSize = 0;
-    qintptr downloadSize = 0;
+    ThreadPool pool;
+
+    QMap<QString,FileInfo> downloadQueue;
 
     void changeDIR(const QString&);
-
 private slots:
     void newConnect(const User&);
 
@@ -55,3 +57,5 @@ signals:
 };
 
 #endif // C_NETWORK_H
+
+void download_core(QMap<QString,FileInfo>& ,const Request&data);

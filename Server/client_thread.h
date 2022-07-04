@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QThread>
 //#include "client.h"
 #include <QMutex>
 #include <QDataStream>
@@ -17,27 +18,24 @@ class ClientThread : public QObject
     Q_OBJECT
 public:
     explicit ClientThread(QObject *parent = nullptr, qintptr id = -1);
+    ~ClientThread();
+    QTcpSocket* getSocket();
 
 public slots:
     void run();
-    void write2client(const QString&, const QString&);
+    void write2client(int, const QString&);
+    void write2client(const Request&);
     Request getFromClient();
-
-    void changeStatus(TcpStatus s)
-    {
-        status = s;
-    }
 
 private:
     QString allFiles = "";
     //Client* tcpClient;
     QTcpSocket* tcpClient;
-    TcpStatus status = TcpStatus::Waiting;
     Dir* dir;
     QMutex lock;
-    qintptr fileSize = 0;
-    qintptr sendSize = 0;
     QString currFileName = "";
+
+    QMap<QString, qintptr>download_finished;
 
 signals:
     void disconnected();
