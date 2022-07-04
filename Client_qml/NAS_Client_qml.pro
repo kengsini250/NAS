@@ -1,10 +1,10 @@
 QT += quick network core
-CONFIG += c++17 console
+CONFIG += c++20 console
 
 SOURCES += \
-        main.cpp \
-        source/FileFormat.cpp \
-        source/c_network.cpp \
+    main.cpp \
+    source/FileFormat.cpp \
+    source/c_network.cpp \
     source/mylistdata.cpp \
     source/mylistmodel.cpp
 
@@ -36,6 +36,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     source/FileFormat.h \
+    source/ThreadPool.h \
     source/c_network.h \
     source/mylistdata.h \
-    source/mylistmodel.h
+    source/mylistmodel.h \
+    source/myQueue.h
